@@ -1,0 +1,3 @@
+CHECKPOINT_PATH_PREFIX = "./checkpoints"
+DEFAULT_RES_SAVE_PATH_PREFIX = "./results"
+CONFIG_PATH_PREFIX = "./configs"
