@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from models.sqsformer import SQSFormer
+from models.hyperrope_vit import HyperRopeViT
 from utils.utils import device, recorder
 from utils.evaluation import HSIEvaluation
 import numpy as np
@@ -23,6 +23,7 @@ class BaseTrainer:
 
        
     def train(self, train_loader, valid_loader=None):
+        torch.autograd.set_detect_anomaly(True)
         epochs = self.params['train'].get('epochs', 200)
         best_valid_oa = 0
         patience = self.params['train'].get('patience', 10)
@@ -45,7 +46,7 @@ class BaseTrainer:
             recorder.append_index_value("epoch_loss", epoch + 1, avg_loss)
             print(f'[Epoch: {epoch + 1}] [Loss: {avg_loss:.5f}]')
 
-            if valid_loader is not None and (epoch+1) % 10 == 0:
+            if valid_loader is not None and (epoch+1) % 1 == 0:
                 valid_oa = self.validate(valid_loader, epoch)
                 if valid_oa > best_valid_oa:
                     best_valid_oa = valid_oa
@@ -92,15 +93,15 @@ class BaseTrainer:
         }
         
         if is_best:
-            torch.save(checkpoint, f'{CHECKPOINT_PATH_PREFIX}/best_model.pth')
+            torch.save(checkpoint, f"{CHECKPOINT_PATH_PREFIX}/{self.params['data']['data_sign']}_best_model.pth")
             print(f'Best model checkpoint saved at epoch {epoch}')
         else:
-            torch.save(checkpoint, f'{CHECKPOINT_PATH_PREFIX}/last_model.pth')
+            torch.save(checkpoint, f"{CHECKPOINT_PATH_PREFIX}/{self.params['data']['data_sign']}_last_model.pth")
             print(f'Last model checkpoint saved at epoch {epoch}')
 
 
     def final_eval(self, test_loader):
-        checkpoint = torch.load(f'{CHECKPOINT_PATH_PREFIX}/best_model.pth')
+        checkpoint = torch.load(f"{CHECKPOINT_PATH_PREFIX}/{self.params['data']['data_sign']}_best_model.pth")
         self.net.load_state_dict(checkpoint['model_state_dict'])
         print(f"Best model loaded from epoch {checkpoint['epoch']} with OA {checkpoint['valid_oa']}")
         y_pred_test, y_test = self.test(test_loader)
@@ -121,11 +122,11 @@ class BaseTrainer:
         
         return np.concatenate(y_pred_test), np.concatenate(y_test)
 
-class SQSFormerTrainer(BaseTrainer):
+class HyperRopeViTTrainer(BaseTrainer):
     def __init__(self, params: Dict):
-        super(SQSFormerTrainer, self).__init__(params)
+        super(HyperRopeViTTrainer, self).__init__(params)
         
-        self.net = SQSFormer(self.params).to(self.device)
+        self.net = HyperRopeViT(self.params).to(self.device)
         self.criterion = nn.CrossEntropyLoss()
         self.lr = self.train_params.get('lr', 0.001)
         self.weight_decay = self.train_params.get('weight_decay', 5e-3)
@@ -143,6 +144,6 @@ class SQSFormerTrainer(BaseTrainer):
 
 def get_trainer(params: Dict):
     trainer_type = params['net']['trainer']
-    if trainer_type == "sqsformer":
-        return SQSFormerTrainer(params)
+    if trainer_type == "hyperrope_vit":
+        return HyperRopeViTTrainer(params)
     raise Exception("Trainer not implemented!")

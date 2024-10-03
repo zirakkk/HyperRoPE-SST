@@ -10,13 +10,17 @@ class HSIEvaluation:
 
     def get_target_names(self) -> List[str]:
         data_sign = self.param['data']['data_sign']
-        if data_sign == 'Indian':
-            return ['Alfalfa', 'Corn-notill', 'Corn-mintill', 'Corn', 'Grass-pasture', 'Grass-trees', 
-                    'Grass-pasture-mowed', 'Hay-windrowed', 'Oats', 'Soybean-notill', 'Soybean-mintill',
-                    'Soybean-clean', 'Wheat', 'Woods', 'Buildings-Grass-Trees-Drives', 'Stone-Steel-Towers']
+        if data_sign == 'IndianPine':  
+            return ['Corn-notill', 'Corn-mintill', 'Corn', 'Grass-pasture', 'Grass-trees', 
+                     'Hay-windrowed', 'Soybean-notill', 'Soybean-mintill',
+                    'Soybean-clean', 'Wheat', 'Woods', 'Buildings-Grass-Trees-Drives', 'Stone-Steel-Towers','Alfalfa','Grass-pasture-mowed', 'Oats']
         elif data_sign == "Pavia":
             return ['Asphalt', 'Meadows', 'Gravel', 'Trees', 'Painted_metal_sheets', 'Bare_Soil', 
                     'Bitumen', 'Self_Blocking_Bricks', 'Shadows']
+        elif data_sign == "Houston":
+            return ['Healthy grass', 'Stressed grass', 'Synthetic grass', 'Trees', 'Soil', 'Water', 
+                    'Residential', 'Commercial', 'Road', 'Highway', 'Railway', 'Parking Lot 1', 
+                    'Parking Lot 2', 'Tennis Court', 'Running Track']
         elif data_sign == "Plastic":
             return ['Fillet', 'ABS', 'FAB', 'HDPE', 'LDPE', 'NYL', 'PET', 'PP', 'PS', 'PUR', 'PVC', 'RUB', 'TEF']
         else:
@@ -32,7 +36,7 @@ class HSIEvaluation:
     def eval(self, y_test: np.ndarray, y_pred_test: np.ndarray) -> Dict:
         class_num = np.max(y_test) + 1
         classification = classification_report(y_test, y_pred_test, 
-                labels=list(range(class_num)), digits=4, target_names=self.target_names)
+                labels=list(range(class_num)), digits=4, target_names=self.target_names, zero_division=0)
         oa = accuracy_score(y_test, y_pred_test)
         confusion = confusion_matrix(y_test, y_pred_test)
         each_acc, aa = self.AA_andEachClassAccuracy(confusion)
