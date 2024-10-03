@@ -1,6 +1,6 @@
-## **Hyperspectral Image Classification with SQSForme**r
+## **Spatial-Spectral Transformer with Mixed Learnable Frequency 2D Rotary Position Embedding for Hyperspectral Image Classification**r
 
-**This project implements a novel approach for hyper**spectral image (HSI) classification using the SQSF**ormer model.**
+**This project implements a novel approach for hyper**spectral image (HSI) classification using the HyperRoPE-SST model.**
 
 **## Setup**
 
