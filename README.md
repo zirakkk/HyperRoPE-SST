@@ -8,9 +8,9 @@
 
 **   ```**
 
-**   git clone https://github.com/your-username/hsi-**classification.git
+**   git clone [https://github.com/your-username/HyperRoPE-SST.git](https://github.com/zirakkk/HyperRoPE-SST.git)
 
-**   cd hsi-classification**
+**   cd Hyper2DRoPE**
 
 **   ```**
 
@@ -28,9 +28,7 @@
 
 **To run an experiment:**
 
-python main.py --config sqsformer_copy.json
-
-You can modify the configuration files in the `configs` directory to adjust the model parameters and dataset settings.
+python main.py
 
 ## Project Structure
 
